@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ratio Problem Solver & Live Teacher Dashboard</title>
+  <title>Ratio Problem Solver</title>
   <style>
     :root {
       --primary: #4f46e5;
@@ -48,7 +48,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 25px;
+      gap: 20px;
     }
 
     .container {
@@ -60,7 +60,7 @@
       position: relative;
     }
 
-    /* Top Navigation Bar */
+    /* Top Stats Bar */
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -118,7 +118,7 @@
       color: white;
       border-radius: 18px;
       padding: 22px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       box-shadow: 0 10px 20px rgba(79, 70, 229, 0.25);
     }
 
@@ -137,6 +137,23 @@
       line-height: 1.5;
     }
 
+    /* Concept Intro Box for Question 1 */
+    .concept-guide-box {
+      background: #fef3c7;
+      border: 2px dashed #f59e0b;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+      text-align: left;
+      color: #78350f;
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    .concept-guide-box strong {
+      color: #b45309;
+    }
+
     /* Scaffolding Form Workings */
     .working-box {
       background: #f8fafc;
@@ -151,7 +168,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 700;
       margin-bottom: 15px;
       flex-wrap: wrap;
@@ -204,11 +221,6 @@
       box-shadow: 0 8px 0 #059669;
     }
 
-    .btn-submit:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 #059669;
-    }
-
     .btn-next {
       background: #4f46e5;
       color: white;
@@ -218,11 +230,22 @@
       font-weight: 800;
       border-radius: 12px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-left: 10px;
     }
 
-    /* Teacher Live Dashboard Panel */
+    /* Hidden Teacher Dashboard Toggle */
+    .teacher-toggle-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: underline;
+    }
+
     .teacher-panel {
+      display: none; /* Hidden by default for students */
       background: #ffffff;
       border: 3px solid #6366f1;
       border-radius: 20px;
@@ -237,15 +260,6 @@
       margin-bottom: 15px;
       padding-bottom: 10px;
       border-bottom: 2px solid #e0e7ff;
-    }
-
-    .teacher-title {
-      font-size: 1.3rem;
-      font-weight: 900;
-      color: #4338ca;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
     .live-feed-table {
@@ -280,7 +294,6 @@
     .status-correct { background: #dcfce7; color: #15803d; }
     .status-incorrect { background: #fee2e2; color: #b91c1c; }
 
-    /* SVG Animations */
     @keyframes owlBounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-6px); }
@@ -312,7 +325,7 @@
         <circle cx="62" cy="45" r="6" fill="#1e1b4b" />
         <polygon points="50,48 44,58 56,58" fill="#ffcc00" />
       </svg>
-      <div class="mascot-dialog" id="mascotText">Fill in the missing values step-by-step to find the ratio answer!</div>
+      <div class="mascot-dialog" id="mascotText">Let's learn how ratios work step-by-step!</div>
     </div>
 
     <!-- Question Card -->
@@ -321,22 +334,31 @@
       <div class="problem-text" id="probText">Loading question...</div>
     </div>
 
-    <!-- Scaffolding Step Working Area -->
-    <div class="working-box" id="workingContainer">
-      <!-- Generated dynamically by JavaScript -->
+    <!-- Concept Explanation Callout (for Question 1) -->
+    <div class="concept-guide-box" id="conceptGuideBox" style="display: none;">
+      💡 <strong>How Ratio Parts Work:</strong><br>
+      A ratio of <strong>5 : 2</strong> means for every 5 parts of Sultanas, there are 2 parts of Cherries.<br>
+      • <strong>Step 1:</strong> Find the value of <strong>1 single part</strong> by dividing the total weight of Cherries ($80\text{g}$) by its $2$ parts.<br>
+      • <strong>Step 2:</strong> Multiply that 1-part value by $5$ to find the weight of Sultanas!
     </div>
+
+    <!-- Scaffolding Step Working Area -->
+    <div class="working-box" id="workingContainer"></div>
 
     <div>
       <button class="btn-submit" id="checkBtn" onclick="checkAnswer()">Check Steps ➔</button>
-      <button class="btn-next" id="nextBtn" onclick="nextQuestion()" style="display: none; margin-left: 10px;">Next Problem ➔</button>
+      <button class="btn-next" id="nextBtn" onclick="nextQuestion()" style="display: none;">Next Problem ➔</button>
     </div>
+
+    <!-- Discrete Teacher Access Switch -->
+    <button class="teacher-toggle-btn" onclick="toggleTeacherDashboard()">🔒 Teacher View</button>
   </div>
 
-  <!-- Live Teacher Inputs & Feedback Dashboard -->
-  <div class="teacher-panel">
+  <!-- Teacher Dashboard Panel (Hidden from students) -->
+  <div class="teacher-panel" id="teacherPanel">
     <div class="teacher-header">
-      <div class="teacher-title">📊 Live Teacher Dashboard (Student Input Stream)</div>
-      <div style="font-size: 0.9rem; font-weight: 700; color: #64748b;">Updates Real-Time in Class</div>
+      <div style="font-size: 1.2rem; font-weight: 900; color: #4338ca;">📊 Teacher Live Monitor</div>
+      <button onclick="toggleTeacherDashboard()" style="padding: 5px 12px; border-radius: 8px; cursor: pointer;">Close Panel</button>
     </div>
     
     <table class="live-feed-table">
@@ -352,7 +374,7 @@
       <tbody id="teacherLogBody">
         <tr>
           <td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">
-            No student inputs submitted yet. Waiting for interaction...
+            No student inputs submitted yet.
           </td>
         </tr>
       </tbody>
@@ -361,41 +383,43 @@
 </div>
 
 <script>
-  // Textbook Question Dataset
   const questions = [
     {
       id: 1,
       title: "Question 1 (a & b): Sultanas and Cherries Ratio",
       text: "To make a cake, Marco uses sultanas and cherries in the ratio 5:2. Marco uses 80g of cherries to make the cake.",
+      hasGuide: true,
       inputs: [
-        { label: "Cherries: 2 parts = 80g, so 1 part = 80 ÷ 2 =", key: "inp1", ans: 40, unit: "g" },
-        { label: "Sultanas: 5 parts = 5 ×", key: "inp2", ans: 40, unit: "" },
-        { label: "Sultanas Mass =", key: "inp3", ans: 200, unit: "g" },
-        { label: "Total Mass = 80 +", key: "inp4", ans: 200, unit: "" },
-        { label: "Total Mass =", key: "inp5", ans: 280, unit: "g" }
+        { label: "Cherries: 2 parts = 80g, so 1 part = 80 ÷ 2 =", ans: 40, unit: "g" },
+        { label: "Sultanas: 5 parts = 5 ×", ans: 40, unit: "" },
+        { label: "Sultanas Mass =", ans: 200, unit: "g" },
+        { label: "Total Mass = 80 +", ans: 200, unit: "" },
+        { label: "Total Mass =", ans: 280, unit: "g" }
       ]
     },
     {
       id: 2,
       title: "Question 2 (a & b): Raspberries and Strawberries Ratio",
       text: "A fruit dessert contains raspberries and strawberries in the ratio 1:2. There are 400g of strawberries in the dessert.",
+      hasGuide: false,
       inputs: [
-        { label: "Strawberries: 2 parts = 400g, so 1 part = 400 ÷ 2 =", key: "inp1", ans: 200, unit: "g" },
-        { label: "Raspberries: 1 part =", key: "inp2", ans: 200, unit: "g" },
-        { label: "Total Mass = 400 +", key: "inp3", ans: 200, unit: "" },
-        { label: "Total Mass =", key: "inp4", ans: 600, unit: "g" }
+        { label: "Strawberries: 2 parts = 400g, so 1 part = 400 ÷ 2 =", ans: 200, unit: "g" },
+        { label: "Raspberries: 1 part =", ans: 200, unit: "g" },
+        { label: "Total Mass = 400 +", ans: 200, unit: "" },
+        { label: "Total Mass =", ans: 600, unit: "g" }
       ]
     },
     {
       id: 3,
       title: "Question 5 (a & b): Concrete Mixture Ratio",
       text: "When Jerry makes concrete, he uses cement, sand and gravel in the ratio 1:2:4. For one wall he uses 15kg of sand.",
+      hasGuide: false,
       inputs: [
-        { label: "Sand: 2 parts = 15kg, so 1 part = 15 ÷ 2 =", key: "inp1", ans: 7.5, unit: "kg" },
-        { label: "Cement: 1 part =", key: "inp2", ans: 7.5, unit: "kg" },
-        { label: "Gravel: 4 parts = 4 ×", key: "inp3", ans: 7.5, unit: "" },
-        { label: "Gravel Mass =", key: "inp4", ans: 30, unit: "kg" },
-        { label: "Total Mass = 15 + 7.5 + 30 =", key: "inp5", ans: 52.5, unit: "kg" }
+        { label: "Sand: 2 parts = 15kg, so 1 part = 15 ÷ 2 =", ans: 7.5, unit: "kg" },
+        { label: "Cement: 1 part =", ans: 7.5, unit: "kg" },
+        { label: "Gravel: 4 parts = 4 ×", ans: 7.5, unit: "" },
+        { label: "Gravel Mass =", ans: 30, unit: "kg" },
+        { label: "Total Mass = 15 + 7.5 + 30 =", ans: 52.5, unit: "kg" }
       ]
     }
   ];
@@ -406,7 +430,6 @@
   let attemptCount = 0;
   let teacherLogs = [];
 
-  // Initialize Canvas Confetti
   const canvas = document.getElementById('confettiCanvas');
   const ctx = canvas.getContext('2d');
   let confettiParticles = [];
@@ -459,6 +482,9 @@
     document.getElementById("nextBtn").style.display = "none";
     document.getElementById("checkBtn").style.display = "inline-block";
 
+    // Show concept guide for Question 1
+    document.getElementById("conceptGuideBox").style.display = q.hasGuide ? "block" : "none";
+
     const container = document.getElementById("workingContainer");
     container.innerHTML = "";
 
@@ -473,7 +499,9 @@
       container.appendChild(row);
     });
 
-    document.getElementById("mascotText").textContent = "Fill in all the blank steps and click 'Check Steps'!";
+    document.getElementById("mascotText").textContent = q.hasGuide ? 
+      "Read the yellow box above to understand the concept, then fill in the blanks!" : 
+      "Fill in all the blank steps and click 'Check Steps'!";
   }
 
   function checkAnswer() {
@@ -495,7 +523,6 @@
       }
     });
 
-    // Log input submission live into Teacher Dashboard
     logTeacherData(q.title, studentInputsSummary.join(", "), attemptCount, allCorrect);
 
     if (allCorrect) {
@@ -511,7 +538,21 @@
     } else {
       streak = 0;
       document.getElementById("streakVal").textContent = streak;
-      document.getElementById("mascotText").textContent = "Some numbers are not quite right. Check your division/multiplication and try again!";
+      document.getElementById("mascotText").textContent = "Some numbers are not quite right. Check your steps and try again!";
+    }
+  }
+
+  function toggleTeacherDashboard() {
+    const panel = document.getElementById("teacherPanel");
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      const pwd = prompt("Enter Teacher Password:");
+      if (pwd === "teacher123") {
+        panel.style.display = "block";
+      } else if (pwd !== null) {
+        alert("Incorrect password!");
+      }
     }
   }
 
