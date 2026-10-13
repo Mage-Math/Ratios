@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ratio Bar Model Solver - Equal Unit Parts</title>
+  <title>Ratio Bar Model Solver</title>
   <style>
     :root {
       --primary: #4f46e5;
@@ -179,7 +179,6 @@
       flex-shrink: 0;
     }
 
-    /* Standardized Equal-Size Unit Blocks */
     .unit-block {
       width: 65px;
       height: 48px;
@@ -206,6 +205,17 @@
       margin-left: 10px;
       white-space: nowrap;
       flex-shrink: 0;
+    }
+
+    .challenge-badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #b45309;
+      border: 2px solid #f59e0b;
+      font-weight: 900;
+      padding: 6px 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
     }
 
     /* Scaffolding Form Workings */
@@ -350,7 +360,7 @@
         <circle cx="62" cy="45" r="6" fill="#1e1b4b" />
         <polygon points="50,48 44,58 56,58" fill="#ffcc00" />
       </svg>
-      <div class="mascot-dialog" id="mascotText">Look at the Bar Model picture below to see how each equal part is shared!</div>
+      <div class="mascot-dialog" id="mascotText">Loading question details...</div>
     </div>
 
     <!-- Question Text -->
@@ -359,24 +369,24 @@
       <div class="problem-text" id="probText">Loading question...</div>
     </div>
 
-    <!-- Pictorial Bar Model Display -->
-    <div class="pictorial-card">
+    <!-- Pictorial Bar Model Display (Guided Mode Only) -->
+    <div class="pictorial-card" id="pictorialCard">
       <div class="pictorial-title">🖼️ Equal-Part Bar Model Representation</div>
       <div id="barModelContainer"></div>
     </div>
 
-    <!-- Scaffolding Input Details -->
+    <!-- Input Details / Working Box -->
     <div class="working-box" id="workingContainer"></div>
 
     <div>
-      <button class="btn-submit" id="checkBtn" onclick="checkAnswer()">Check Steps ➔</button>
+      <button class="btn-submit" id="checkBtn" onclick="checkAnswer()">Check Answer ➔</button>
       <button class="btn-next" id="nextBtn" onclick="nextQuestion()" style="display: none;">Next Problem ➔</button>
     </div>
 
     <button class="teacher-toggle-btn" onclick="toggleTeacherDashboard()">🔒 Teacher View</button>
   </div>
 
-  <!-- Teacher Panel -->
+  <!-- Hidden Teacher Panel -->
   <div class="teacher-panel" id="teacherPanel">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
       <div style="font-size: 1.2rem; font-weight: 900; color: #4338ca;">📊 Teacher Live Monitor</div>
@@ -401,10 +411,12 @@
 
 <script>
   const questions = [
+    // --- 5 GUIDED SCAFFOLDED QUESTIONS ---
     {
       id: 1,
-      title: "Question 1: Sultanas and Cherries (5 : 2)",
+      title: "Question 1: Sultanas & Cherries (5 : 2)",
       text: "To make a cake, Marco uses sultanas and cherries in the ratio 5:2. Marco uses 80g of cherries to make the cake.",
+      guided: true,
       ratio: [
         { label: "Sultanas (5)", parts: 5, color: "#f59e0b", knownVal: "" },
         { label: "Cherries (2)", parts: 2, color: "#ef4444", knownVal: "= 80g total" }
@@ -419,8 +431,9 @@
     },
     {
       id: 2,
-      title: "Question 2: Raspberries and Strawberries (1 : 2)",
+      title: "Question 2: Raspberries & Strawberries (1 : 2)",
       text: "A fruit dessert contains raspberries and strawberries in the ratio 1:2. There are 400g of strawberries in the dessert.",
+      guided: true,
       ratio: [
         { label: "Raspberries (1)", parts: 1, color: "#ec4899", knownVal: "" },
         { label: "Strawberries (2)", parts: 2, color: "#f43f5e", knownVal: "= 400g total" }
@@ -434,8 +447,42 @@
     },
     {
       id: 3,
+      title: "Question 3: Money Sharing (3 : 5)",
+      text: "Xavier and Alicia share some money in the ratio 3:5. Xavier gets $75.",
+      guided: true,
+      ratio: [
+        { label: "Xavier (3)", parts: 3, color: "#3b82f6", knownVal: "= $75 total" },
+        { label: "Alicia (5)", parts: 5, color: "#8b5cf6", knownVal: "" }
+      ],
+      inputs: [
+        { label: "Xavier: 3 parts = $75, so 1 part = 75 ÷ 3 =", ans: 25, unit: "$" },
+        { label: "Alicia: 5 parts = 5 ×", ans: 25, unit: "" },
+        { label: "Alicia Gets =", ans: 125, unit: "$" },
+        { label: "Total Shared = 75 +", ans: 125, unit: "" },
+        { label: "Total Amount =", ans: 200, unit: "$" }
+      ]
+    },
+    {
+      id: 4,
+      title: "Question 4: Electricity Bill (3 : 4)",
+      text: "Kaya and Akiko share their electricity bills in the ratio 3:4. In January Akiko pays $24.",
+      guided: true,
+      ratio: [
+        { label: "Kaya (3)", parts: 3, color: "#06b6d4", knownVal: "" },
+        { label: "Akiko (4)", parts: 4, color: "#10b981", knownVal: "= $24 total" }
+      ],
+      inputs: [
+        { label: "Akiko: 4 parts = $24, so 1 part = 24 ÷ 4 =", ans: 6, unit: "$" },
+        { label: "Kaya: 3 parts = 3 ×", ans: 6, unit: "" },
+        { label: "Kaya Pays =", ans: 18, unit: "$" },
+        { label: "Total Bill = 18 + 24 =", ans: 42, unit: "$" }
+      ]
+    },
+    {
+      id: 5,
       title: "Question 5: Concrete Mixture (1 : 2 : 4)",
       text: "When Jerry makes concrete, he uses cement, sand and gravel in the ratio 1:2:4. For one wall he uses 15kg of sand.",
+      guided: true,
       ratio: [
         { label: "Cement (1)", parts: 1, color: "#94a3b8", knownVal: "" },
         { label: "Sand (2)", parts: 2, color: "#eab308", knownVal: "= 15kg total" },
@@ -447,6 +494,40 @@
         { label: "Gravel: 4 parts = 4 ×", ans: 7.5, unit: "" },
         { label: "Gravel Mass =", ans: 30, unit: "kg" },
         { label: "Total Mass = 15 + 7.5 + 30 =", ans: 52.5, unit: "kg" }
+      ]
+    },
+
+    // --- 3 UNGUIDED INDEPENDENT CHALLENGE QUESTIONS ---
+    {
+      id: 6,
+      title: "Challenge 1: Sharing Sweets (4 : 7 : 9)",
+      text: "Three children share sweets in the ratio 4 : 7 : 9. The child with the most sweets gets 54 sweets.",
+      guided: false,
+      inputs: [
+        { label: "a) How many sweets does the child with 4 parts get?", ans: 24, unit: "sweets" },
+        { label: "b) How many sweets does the child with 7 parts get?", ans: 42, unit: "sweets" },
+        { label: "c) What is the total number of sweets shared altogether?", ans: 120, unit: "sweets" }
+      ]
+    },
+    {
+      id: 7,
+      title: "Challenge 2: Green Paint Mixture (4 : 5 : 1)",
+      text: "Xavier mixes yellow, blue, and white paint in the ratio 4 : 5 : 1 to make green paint. He uses 600 mL of yellow paint.",
+      guided: false,
+      inputs: [
+        { label: "a) How much blue paint does he use?", ans: 750, unit: "mL" },
+        { label: "b) How much white paint does he use?", ans: 150, unit: "mL" },
+        { label: "c) Total green paint made in litres (1 L = 1000 mL):", ans: 1.5, unit: "litres" }
+      ]
+    },
+    {
+      id: 8,
+      title: "Challenge 3: Purple Gold Jewelry (4 : 1)",
+      text: "Purple gold is made from gold and aluminium in the ratio 4 : 1. A purple gold bracelet has 39g more gold than aluminium.",
+      guided: false,
+      inputs: [
+        { label: "a) What is the mass of 1 part in grams? (Hint: difference in parts = 4 - 1)", ans: 13, unit: "g" },
+        { label: "b) What is the total mass of the bracelet?", ans: 65, unit: "g" }
       ]
     }
   ];
@@ -509,29 +590,42 @@
     document.getElementById("nextBtn").style.display = "none";
     document.getElementById("checkBtn").style.display = "inline-block";
 
-    // Render Equal-Part Bar Model
+    const pictorialCard = document.getElementById("pictorialCard");
     const barContainer = document.getElementById("barModelContainer");
-    barContainer.innerHTML = "";
-    q.ratio.forEach(r => {
-      const row = document.createElement("div");
-      row.className = "bar-row";
 
-      let blocksHTML = "";
-      for (let i = 0; i < r.parts; i++) {
-        blocksHTML += `<div class="unit-block" style="background: ${r.color};">1 part</div>`;
-      }
+    if (q.guided) {
+      pictorialCard.style.display = "block";
+      barContainer.innerHTML = "";
+      q.ratio.forEach(r => {
+        const row = document.createElement("div");
+        row.className = "bar-row";
+        let blocksHTML = "";
+        for (let i = 0; i < r.parts; i++) {
+          blocksHTML += `<div class="unit-block" style="background: ${r.color};">1 part</div>`;
+        }
+        row.innerHTML = `
+          <div class="bar-label">${r.label}</div>
+          <div class="bar-units-group">${blocksHTML}</div>
+          ${r.knownVal ? `<div class="known-badge">${r.knownVal}</div>` : ''}
+        `;
+        barContainer.appendChild(row);
+      });
+      document.getElementById("mascotText").textContent = "Look at the Bar Model picture to solve step-by-step!";
+    } else {
+      pictorialCard.style.display = "none";
+      document.getElementById("mascotText").textContent = "⚡ Independent Practice Zone! Solve directly without hints or bar diagrams.";
+    }
 
-      row.innerHTML = `
-        <div class="bar-label">${r.label}</div>
-        <div class="bar-units-group">${blocksHTML}</div>
-        ${r.knownVal ? `<div class="known-badge">${r.knownVal}</div>` : ''}
-      `;
-      barContainer.appendChild(row);
-    });
-
-    // Render Working Details Inputs
     const container = document.getElementById("workingContainer");
     container.innerHTML = "";
+
+    if (!q.guided) {
+      const badge = document.createElement("div");
+      badge.className = "challenge-badge";
+      badge.textContent = "🎯 Independent Challenge Mode (No Scaffolding Hints)";
+      container.appendChild(badge);
+    }
+
     q.inputs.forEach((item, idx) => {
       const row = document.createElement("div");
       row.className = "step-line";
@@ -542,8 +636,6 @@
       `;
       container.appendChild(row);
     });
-
-    document.getElementById("mascotText").textContent = "Notice how each '1 part' box is identical in size! Use this to solve step-by-step!";
   }
 
   function checkAnswer() {
@@ -568,19 +660,22 @@
     logTeacherData(q.title, studentInputsSummary.join(", "), attemptCount, allCorrect);
 
     if (allCorrect) {
-      score += 10;
+      score += q.guided ? 10 : 20;
       streak += 1;
       document.getElementById("scoreVal").textContent = score;
       document.getElementById("streakVal").textContent = streak;
 
       triggerConfetti();
-      document.getElementById("mascotText").textContent = "EXCELLENT! You solved the equal-part bar model correctly!";
+      document.getElementById("mascotText").textContent = q.guided ? 
+        "EXCELLENT! You solved the bar model and details correctly!" : 
+        "WOW! Mastered the unguided challenge problem!";
+      
       document.getElementById("checkBtn").style.display = "none";
       document.getElementById("nextBtn").style.display = "inline-block";
     } else {
       streak = 0;
       document.getElementById("streakVal").textContent = streak;
-      document.getElementById("mascotText").textContent = "Some calculated details are not correct. Check your working steps!";
+      document.getElementById("mascotText").textContent = "Some answers are incorrect. Re-check your calculations!";
     }
   }
 
