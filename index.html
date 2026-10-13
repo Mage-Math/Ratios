@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ratio Bar Model Solver</title>
+  <title>Ratio Bar Model Solver - Equal Unit Parts</title>
   <style>
     :root {
       --primary: #4f46e5;
@@ -17,7 +17,7 @@
 
     * {
       box-sizing: border-box;
-      font-family: 'Fredoka', 'Segoe UI', Tahoma, sans-serif;
+      font-family: 'Fredoka', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
@@ -144,6 +144,7 @@
       padding: 20px;
       margin-bottom: 25px;
       text-align: left;
+      overflow-x: auto;
     }
 
     .pictorial-title {
@@ -165,27 +166,30 @@
     }
 
     .bar-label {
-      width: 130px;
+      width: 140px;
       font-weight: 800;
       font-size: 1.05rem;
       color: #334155;
+      flex-shrink: 0;
     }
 
     .bar-units-group {
       display: flex;
       gap: 6px;
-      flex-grow: 1;
+      flex-shrink: 0;
     }
 
+    /* Standardized Equal-Size Unit Blocks */
     .unit-block {
-      height: 45px;
-      flex: 1;
+      width: 65px;
+      height: 48px;
+      flex-shrink: 0;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: white;
       border: 2px solid rgba(0,0,0,0.15);
       box-shadow: 0 3px 6px rgba(0,0,0,0.05);
@@ -201,6 +205,7 @@
       font-weight: 800;
       margin-left: 10px;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* Scaffolding Form Workings */
@@ -345,7 +350,7 @@
         <circle cx="62" cy="45" r="6" fill="#1e1b4b" />
         <polygon points="50,48 44,58 56,58" fill="#ffcc00" />
       </svg>
-      <div class="mascot-dialog" id="mascotText">Look at the Bar Model picture below to see how the ratio is shared!</div>
+      <div class="mascot-dialog" id="mascotText">Look at the Bar Model picture below to see how each equal part is shared!</div>
     </div>
 
     <!-- Question Text -->
@@ -356,7 +361,7 @@
 
     <!-- Pictorial Bar Model Display -->
     <div class="pictorial-card">
-      <div class="pictorial-title">🖼️ Visual Bar Model Representation</div>
+      <div class="pictorial-title">🖼️ Equal-Part Bar Model Representation</div>
       <div id="barModelContainer"></div>
     </div>
 
@@ -504,7 +509,7 @@
     document.getElementById("nextBtn").style.display = "none";
     document.getElementById("checkBtn").style.display = "inline-block";
 
-    // 1. Render Pictorial Bar Model
+    // Render Equal-Part Bar Model
     const barContainer = document.getElementById("barModelContainer");
     barContainer.innerHTML = "";
     q.ratio.forEach(r => {
@@ -524,7 +529,7 @@
       barContainer.appendChild(row);
     });
 
-    // 2. Render Working Details Inputs
+    // Render Working Details Inputs
     const container = document.getElementById("workingContainer");
     container.innerHTML = "";
     q.inputs.forEach((item, idx) => {
@@ -538,7 +543,7 @@
       container.appendChild(row);
     });
 
-    document.getElementById("mascotText").textContent = "Use the picture above to find the value of 1 part, then fill in the details!";
+    document.getElementById("mascotText").textContent = "Notice how each '1 part' box is identical in size! Use this to solve step-by-step!";
   }
 
   function checkAnswer() {
@@ -569,7 +574,7 @@
       document.getElementById("streakVal").textContent = streak;
 
       triggerConfetti();
-      document.getElementById("mascotText").textContent = "EXCELLENT! You solved the bar model and details correctly!";
+      document.getElementById("mascotText").textContent = "EXCELLENT! You solved the equal-part bar model correctly!";
       document.getElementById("checkBtn").style.display = "none";
       document.getElementById("nextBtn").style.display = "inline-block";
     } else {
